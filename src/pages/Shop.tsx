@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Search, Filter, X, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Search, X, Plus, Minus } from 'lucide-react';
 interface Product {
   id: number;
   name: string;

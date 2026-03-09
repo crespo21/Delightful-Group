@@ -101,6 +101,7 @@ const ReviewCard: React.FC<{
 };
 const Reviews: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const filteredReviews = activeFilter ? reviews.filter(review => review.service === activeFilter) : reviews;
   return <div className="min-h-screen">
       <section className="relative py-20 bg-green-600 text-white overflow-hidden">
@@ -174,18 +175,27 @@ const Reviews: React.FC = () => {
                 or products.
               </p>
             </div>
-            <form className="bg-white rounded-lg shadow-md p-6">
+            <form className="bg-white rounded-lg shadow-md p-6" onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              const name = fd.get('name') as string;
+              const email = fd.get('email') as string;
+              const comment = fd.get('comment') as string;
+              const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nReview:\n${comment}`);
+              window.location.href = `mailto:sales@delightfulgroup.africa?subject=Customer Review from ${encodeURIComponent(name)}&body=${body}`;
+              setReviewSubmitted(true);
+            }}>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                   Name
                 </label>
-                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="name" type="text" placeholder="Your Name" />
+                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="name" name="name" type="text" placeholder="Your Name" required />
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                   Email
                 </label>
-                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="email" type="email" placeholder="Your Email" />
+                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="email" name="email" type="email" placeholder="Your Email" required />
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -220,8 +230,11 @@ const Reviews: React.FC = () => {
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="comment">
                   Your Review
                 </label>
-                <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 h-32" id="comment" placeholder="Share your experience with us..."></textarea>
+                <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 h-32" id="comment" name="comment" placeholder="Share your experience with us..." required></textarea>
               </div>
+              {reviewSubmitted && (
+                <p className="text-green-600 text-sm mb-4">Thank you! Your review email is ready to send.</p>
+              )}
               <div className="flex items-center justify-end">
                 <Button type="submit" className="flex items-center">
                   <Send size={18} className="mr-2" />
