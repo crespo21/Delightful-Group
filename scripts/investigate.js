@@ -17,6 +17,7 @@
 import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'fs';
 import { join, extname, relative } from 'path';
 import { execSync } from 'child_process';
+import { tmpdir } from 'os';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -93,8 +94,9 @@ function checkForms() {
     const content = readFile(file);
     const rel = relative(ROOT, file);
 
-    // Detect <form> without onSubmit
-    if (/<form(?![^>]*onSubmit)/i.test(content)) {
+    // Detect <form> without onSubmit — normalise whitespace to handle multiline tags
+    const normalised = content.replace(/\s+/g, ' ');
+    if (/<form(?![^>]*onSubmit)/i.test(normalised)) {
       addFinding({
         severity: 'high',
         category: 'frontend',
@@ -110,9 +112,10 @@ function checkForms() {
       });
     }
 
-    // Detect inputs without associated labels (rough check)
-    if (/<input(?![^>]*aria-label)(?![^>]*id=)/i.test(content) ||
-        /<textarea(?![^>]*aria-label)(?![^>]*id=)/i.test(content)) {
+    // Detect inputs that have neither an id (for label association) nor an aria-label
+    const noIdNoAriaInput = /<input(?:[^>](?!id=)(?!aria-label))*\/?>/gi;
+    const noIdNoAriaTextarea = /<textarea(?:[^>](?!id=)(?!aria-label))*>/gi;
+    if (noIdNoAriaInput.test(normalised) || noIdNoAriaTextarea.test(normalised)) {
       addFinding({
         severity: 'medium',
         category: 'frontend',
@@ -121,7 +124,7 @@ function checkForms() {
           `\`${rel}\` may contain form inputs without proper accessibility labels (no \`id\` ` +
           'paired with a `<label htmlFor>`, and no `aria-label`). This harms screen-reader users.',
         file: rel,
-        recommendation: 'Ensure every interactive form control has either an associated `<label>` or an `aria-label` attribute.',
+        recommendation: 'Ensure every interactive form control has either an associated `<label htmlFor>` or an `aria-label` attribute.',
       });
     }
   }
@@ -456,8 +459,9 @@ async function main() {
 
   // Write report
   const report = generateReport();
-  writeFileSync('/tmp/investigation-report.md', report, 'utf8');
-  console.log('\n📄 Report written to /tmp/investigation-report.md');
+  const reportPath = join(tmpdir(), 'investigation-report.md');
+  writeFileSync(reportPath, report, 'utf8');
+  console.log(`\n📄 Report written to ${reportPath}`);
   console.log(report);
 
   // Create GitHub Issues

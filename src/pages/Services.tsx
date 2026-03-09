@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Leaf, ShoppingBag, ChevronRight } from 'lucide-react';
 import Button from '../components/ui/Button';
+import { CONTACT_EMAIL } from '../constants';
 interface ServiceCardProps {
   icon: React.ReactNode;
   title: string;
@@ -55,7 +56,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
     const body = encodeURIComponent(
       `Service Request: ${service}\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
     );
-    window.location.href = `mailto:sales@delightfulgroup.africa?subject=Service Request: ${encodeURIComponent(service)}&body=${body}`;
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=Service Request: ${encodeURIComponent(service)}&body=${body}`;
     onClose();
   };
   return <motion.div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" initial={{

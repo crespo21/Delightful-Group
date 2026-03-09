@@ -16,4 +16,4 @@ export default defineConfig({
       exclude: ['src/__tests__/**', 'src/index.tsx'],
     },
   },
-} as Parameters<typeof defineConfig>[0])
+})

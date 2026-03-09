@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, StarHalf, Send } from 'lucide-react';
 import Button from '../components/ui/Button';
+import { CONTACT_EMAIL } from '../constants';
 interface Review {
   id: number;
   name: string;
@@ -182,7 +183,7 @@ const Reviews: React.FC = () => {
               const email = fd.get('email') as string;
               const comment = fd.get('comment') as string;
               const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nReview:\n${comment}`);
-              window.location.href = `mailto:sales@delightfulgroup.africa?subject=Customer Review from ${encodeURIComponent(name)}&body=${body}`;
+              window.location.href = `mailto:${CONTACT_EMAIL}?subject=Customer Review from ${encodeURIComponent(name)}&body=${body}`;
               setReviewSubmitted(true);
             }}>
               <div className="mb-4">

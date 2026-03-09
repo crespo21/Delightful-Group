@@ -62,4 +62,5 @@ jobs:
         with:
           name: investigation-report
           path: /tmp/investigation-report.md
+          if-no-files-found: warn
           retention-days: 30
