@@ -1,0 +1,655 @@
+{
+  "summary": {
+    "total_issues": 12,
+    "critical": 1,
+    "high": 2,
+    "medium": 7,
+    "low": 2
+  },
+  "issues_by_severity": {
+    "critical": [
+      {
+        "title": "Zero Test Coverage - No Tests Exist",
+        "description": "The application has NO unit tests, integration tests, or E2E tests. No testing infrastructure is configured.",
+        "severity": "critical",
+        "component": "integration",
+        "reproduction_steps": [
+          "1. Search repository for *.test.* or *.spec.* files",
+          "2. Check package.json for test scripts",
+          "3. Verify no Jest, Vitest, or testing library configuration"
+        ],
+        "expected_behavior": "Application should have comprehensive test coverage with unit, integration, and E2E tests.",
+        "actual_behavior": "Zero tests exist. No testing framework configured.",
+        "impact": "CRITICAL - No way to verify functionality, prevent regressions, or ensure code quality. Deployment is risky.",
+        "suggested_fix": "Set up Vitest + React Testing Library. Add unit tests for components, integration tests for user flows, and Playwright for E2E tests.",
+        "file_path": "tests/",
+        "line_number": 0
+      }
+    ],
+    "high": [
+      {
+        "title": "Non-Functional Forms - No Submit Handlers",
+        "description": "Found 3 form(s) without proper submission handlers. Forms cannot send data anywhere.",
+        "severity": "high",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Navigate to Contact page (/contact)",
+          "2. Fill out the contact form",
+          "3. Click submit button",
+          "4. Observe that nothing happens"
+        ],
+        "expected_behavior": "Forms should submit data to backend API endpoints and show confirmation messages.",
+        "actual_behavior": "Forms have no submit handlers or only preventDefault() with no actual submission logic.",
+        "impact": "HIGH - Users cannot contact the business, request services, or submit reviews.",
+        "suggested_fix": "Implement form submission handlers that POST data to backend API endpoints. Add validation and user feedback.",
+        "file_path": "src/pages/Reviews.tsx, src/pages/Services.tsx, src/pages/Contact.tsx",
+        "line_number": 0
+      },
+      {
+        "title": "Missing Input Validation and Sanitization",
+        "description": "Forms lack input validation and sanitization, creating potential security vulnerabilities.",
+        "severity": "high",
+        "component": "security",
+        "reproduction_steps": [
+          "1. Check form components for validation logic",
+          "2. Verify no validation schema (Yup, Zod) exists",
+          "3. Check for XSS protection beyond React's default"
+        ],
+        "expected_behavior": "All user inputs should be validated, sanitized, and protected against XSS/injection attacks.",
+        "actual_behavior": "No validation libraries or input sanitization implemented.",
+        "impact": "HIGH - Potential XSS vulnerabilities, data integrity issues, poor UX.",
+        "suggested_fix": "Implement form validation using Zod or Yup. Add input sanitization. Use controlled components with validation state.",
+        "file_path": "src/pages/Contact.tsx, src/pages/Services.tsx, src/pages/Reviews.tsx",
+        "line_number": 0
+      }
+    ],
+    "medium": [
+      {
+        "title": "Improper Navigation - Using window.location Instead of React Router",
+        "description": "Found usage of window.location.href for navigation which breaks React Router's SPA behavior.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Check file: src/pages/Services.tsx:158",
+          "2. Note usage of window.location.href",
+          "3. This causes full page reload instead of SPA navigation"
+        ],
+        "expected_behavior": "Should use React Router's useNavigate() hook for client-side navigation.",
+        "actual_behavior": "Uses window.location.href which causes full page reload.",
+        "impact": "MEDIUM - Breaks SPA behavior, causes unnecessary page reloads, loses React state.",
+        "suggested_fix": "Replace window.location.href with useNavigate() from react-router-dom.",
+        "file_path": "src/pages/Services.tsx",
+        "line_number": 158
+      },
+      {
+        "title": "Duplicate Product Data - No Single Source of Truth",
+        "description": "Product data is duplicated in Shop.tsx and FeaturedProducts.tsx. Changes must be made in multiple places.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Open src/pages/Shop.tsx and check products array",
+          "2. Open src/components/home/FeaturedProducts.tsx and check products array",
+          "3. Notice duplicate product definitions"
+        ],
+        "expected_behavior": "Product data should come from a single source (API or data file).",
+        "actual_behavior": "Products are hardcoded in multiple components with no synchronization.",
+        "impact": "MEDIUM - Data inconsistency, maintenance burden, risk of divergence.",
+        "suggested_fix": "Create a shared products data file or fetch from API. Use single source of truth.",
+        "file_path": "src/pages/Shop.tsx, src/components/home/FeaturedProducts.tsx",
+        "line_number": 0
+      },
+      {
+        "title": "Hardcoded Data in Components - Should Use API",
+        "description": "All data (products, reviews, carousel slides) is hardcoded in components instead of fetched from API.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Check Shop.tsx for hardcoded products array",
+          "2. Check Reviews.tsx for hardcoded reviews array",
+          "3. Check HeroCarousel.tsx for hardcoded slides array",
+          "4. Note no API fetch calls exist"
+        ],
+        "expected_behavior": "Data should be fetched from backend API for dynamic content management.",
+        "actual_behavior": "All data is hardcoded in component files.",
+        "impact": "MEDIUM - Cannot update content without code deployment. No content management system.",
+        "suggested_fix": "Create API endpoints for products, reviews, and content. Use useEffect + fetch/axios to load data dynamically.",
+        "file_path": "src/pages/Shop.tsx, src/pages/Reviews.tsx, src/components/home/HeroCarousel.tsx",
+        "line_number": 0
+      },
+      {
+        "title": "Generic Page Title - Poor SEO",
+        "description": "index.html has generic 'Vite + React + TS' title instead of business name.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Open index.html",
+          "2. Check <title> tag",
+          "3. Note generic Vite template title"
+        ],
+        "expected_behavior": "Title should be 'DelightfulGroup.africa - Professional Cleaning & Landscaping Services'",
+        "actual_behavior": "Generic template title 'Vite + React + TS'",
+        "impact": "MEDIUM - Poor SEO, unprofessional appearance, low search rankings.",
+        "suggested_fix": "Update title and add proper meta description, Open Graph tags, and structured data.",
+        "file_path": "index.html",
+        "line_number": 0
+      },
+      {
+        "title": "Missing Meta Description",
+        "description": "No meta description tag for SEO.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. View page source",
+          "2. Search for meta description tag",
+          "3. Note absence"
+        ],
+        "expected_behavior": "Should have descriptive meta description for search engines.",
+        "actual_behavior": "No meta description exists.",
+        "impact": "MEDIUM - Reduced search engine visibility and click-through rates.",
+        "suggested_fix": "Add comprehensive meta tags including description, keywords, Open Graph, and Twitter cards.",
+        "file_path": "index.html",
+        "line_number": 0
+      },
+      {
+        "title": "Accessibility Improvements Needed",
+        "description": "Application needs accessibility enhancements for WCAG compliance.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Run Lighthouse accessibility audit",
+          "2. Check for missing alt text on images",
+          "3. Verify keyboard navigation support",
+          "4. Test screen reader compatibility"
+        ],
+        "expected_behavior": "Should meet WCAG 2.1 Level AA standards for accessibility.",
+        "actual_behavior": "Some accessibility features missing or incomplete.",
+        "impact": "MEDIUM - Excludes users with disabilities, potential legal compliance issues.",
+        "suggested_fix": "Add skip links, improve ARIA labels, ensure keyboard navigation, verify color contrast, add alt text to all images.",
+        "file_path": "src/components/",
+        "line_number": 0
+      },
+      {
+        "title": "Unoptimized External Images - Performance Impact",
+        "description": "Application loads large unoptimized images from Unsplash CDN without size optimization or lazy loading.",
+        "severity": "medium",
+        "component": "performance",
+        "reproduction_steps": [
+          "1. Open Network tab in DevTools",
+          "2. Load any page with images",
+          "3. Observe large image downloads from Unsplash",
+          "4. Note no lazy loading or responsive images"
+        ],
+        "expected_behavior": "Images should be optimized, resized appropriately, and lazy-loaded.",
+        "actual_behavior": "Full-size external images loaded eagerly without optimization.",
+        "impact": "MEDIUM - Slow page loads, high bandwidth usage, poor mobile experience.",
+        "suggested_fix": "Implement image optimization, use responsive images, add lazy loading, consider using image CDN with automatic optimization.",
+        "file_path": "src/components/home/, src/pages/",
+        "line_number": 0
+      }
+    ],
+    "low": [
+      {
+        "title": "Deprecated ESLint Version",
+        "description": "Using ESLint v8 which is no longer supported. Should upgrade to v9.",
+        "severity": "low",
+        "component": "integration",
+        "reproduction_steps": [
+          "1. Check package.json",
+          "2. Note eslint version ^8.50.0",
+          "3. Check ESLint website for version support status"
+        ],
+        "expected_behavior": "Should use latest supported ESLint version (v9+).",
+        "actual_behavior": "Using deprecated ESLint v8.",
+        "impact": "LOW - Security updates and bug fixes no longer provided.",
+        "suggested_fix": "Upgrade to ESLint v9 with new flat config format.",
+        "file_path": "package.json",
+        "line_number": 0
+      },
+      {
+        "title": "Linting Warnings Need Resolution",
+        "description": "Found 5 ESLint warnings that should be fixed.",
+        "severity": "low",
+        "component": "integration",
+        "reproduction_steps": [
+          "1. Run 'npm run lint'",
+          "2. Observe warnings",
+          "3. Review warnings for unused imports and hooks dependencies"
+        ],
+        "expected_behavior": "Code should pass linting without warnings.",
+        "actual_behavior": "ESLint reports 5 warnings.",
+        "impact": "LOW - Code quality and maintainability concerns.",
+        "suggested_fix": "Fix unused imports, resolve React hooks dependencies warnings.",
+        "file_path": "src/components/ThreeD/Scene.tsx, src/pages/Contact.tsx, src/pages/Shop.tsx",
+        "line_number": 0
+      }
+    ]
+  },
+  "issues_by_component": {
+    "frontend": [
+      {
+        "title": "Non-Functional Forms - No Submit Handlers",
+        "description": "Found 3 form(s) without proper submission handlers. Forms cannot send data anywhere.",
+        "severity": "high",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Navigate to Contact page (/contact)",
+          "2. Fill out the contact form",
+          "3. Click submit button",
+          "4. Observe that nothing happens"
+        ],
+        "expected_behavior": "Forms should submit data to backend API endpoints and show confirmation messages.",
+        "actual_behavior": "Forms have no submit handlers or only preventDefault() with no actual submission logic.",
+        "impact": "HIGH - Users cannot contact the business, request services, or submit reviews.",
+        "suggested_fix": "Implement form submission handlers that POST data to backend API endpoints. Add validation and user feedback.",
+        "file_path": "src/pages/Reviews.tsx, src/pages/Services.tsx, src/pages/Contact.tsx",
+        "line_number": 0
+      },
+      {
+        "title": "Improper Navigation - Using window.location Instead of React Router",
+        "description": "Found usage of window.location.href for navigation which breaks React Router's SPA behavior.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Check file: src/pages/Services.tsx:158",
+          "2. Note usage of window.location.href",
+          "3. This causes full page reload instead of SPA navigation"
+        ],
+        "expected_behavior": "Should use React Router's useNavigate() hook for client-side navigation.",
+        "actual_behavior": "Uses window.location.href which causes full page reload.",
+        "impact": "MEDIUM - Breaks SPA behavior, causes unnecessary page reloads, loses React state.",
+        "suggested_fix": "Replace window.location.href with useNavigate() from react-router-dom.",
+        "file_path": "src/pages/Services.tsx",
+        "line_number": 158
+      },
+      {
+        "title": "Duplicate Product Data - No Single Source of Truth",
+        "description": "Product data is duplicated in Shop.tsx and FeaturedProducts.tsx. Changes must be made in multiple places.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Open src/pages/Shop.tsx and check products array",
+          "2. Open src/components/home/FeaturedProducts.tsx and check products array",
+          "3. Notice duplicate product definitions"
+        ],
+        "expected_behavior": "Product data should come from a single source (API or data file).",
+        "actual_behavior": "Products are hardcoded in multiple components with no synchronization.",
+        "impact": "MEDIUM - Data inconsistency, maintenance burden, risk of divergence.",
+        "suggested_fix": "Create a shared products data file or fetch from API. Use single source of truth.",
+        "file_path": "src/pages/Shop.tsx, src/components/home/FeaturedProducts.tsx",
+        "line_number": 0
+      },
+      {
+        "title": "Hardcoded Data in Components - Should Use API",
+        "description": "All data (products, reviews, carousel slides) is hardcoded in components instead of fetched from API.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Check Shop.tsx for hardcoded products array",
+          "2. Check Reviews.tsx for hardcoded reviews array",
+          "3. Check HeroCarousel.tsx for hardcoded slides array",
+          "4. Note no API fetch calls exist"
+        ],
+        "expected_behavior": "Data should be fetched from backend API for dynamic content management.",
+        "actual_behavior": "All data is hardcoded in component files.",
+        "impact": "MEDIUM - Cannot update content without code deployment. No content management system.",
+        "suggested_fix": "Create API endpoints for products, reviews, and content. Use useEffect + fetch/axios to load data dynamically.",
+        "file_path": "src/pages/Shop.tsx, src/pages/Reviews.tsx, src/components/home/HeroCarousel.tsx",
+        "line_number": 0
+      },
+      {
+        "title": "Generic Page Title - Poor SEO",
+        "description": "index.html has generic 'Vite + React + TS' title instead of business name.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Open index.html",
+          "2. Check <title> tag",
+          "3. Note generic Vite template title"
+        ],
+        "expected_behavior": "Title should be 'DelightfulGroup.africa - Professional Cleaning & Landscaping Services'",
+        "actual_behavior": "Generic template title 'Vite + React + TS'",
+        "impact": "MEDIUM - Poor SEO, unprofessional appearance, low search rankings.",
+        "suggested_fix": "Update title and add proper meta description, Open Graph tags, and structured data.",
+        "file_path": "index.html",
+        "line_number": 0
+      },
+      {
+        "title": "Missing Meta Description",
+        "description": "No meta description tag for SEO.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. View page source",
+          "2. Search for meta description tag",
+          "3. Note absence"
+        ],
+        "expected_behavior": "Should have descriptive meta description for search engines.",
+        "actual_behavior": "No meta description exists.",
+        "impact": "MEDIUM - Reduced search engine visibility and click-through rates.",
+        "suggested_fix": "Add comprehensive meta tags including description, keywords, Open Graph, and Twitter cards.",
+        "file_path": "index.html",
+        "line_number": 0
+      },
+      {
+        "title": "Accessibility Improvements Needed",
+        "description": "Application needs accessibility enhancements for WCAG compliance.",
+        "severity": "medium",
+        "component": "frontend",
+        "reproduction_steps": [
+          "1. Run Lighthouse accessibility audit",
+          "2. Check for missing alt text on images",
+          "3. Verify keyboard navigation support",
+          "4. Test screen reader compatibility"
+        ],
+        "expected_behavior": "Should meet WCAG 2.1 Level AA standards for accessibility.",
+        "actual_behavior": "Some accessibility features missing or incomplete.",
+        "impact": "MEDIUM - Excludes users with disabilities, potential legal compliance issues.",
+        "suggested_fix": "Add skip links, improve ARIA labels, ensure keyboard navigation, verify color contrast, add alt text to all images.",
+        "file_path": "src/components/",
+        "line_number": 0
+      }
+    ],
+    "security": [
+      {
+        "title": "Missing Input Validation and Sanitization",
+        "description": "Forms lack input validation and sanitization, creating potential security vulnerabilities.",
+        "severity": "high",
+        "component": "security",
+        "reproduction_steps": [
+          "1. Check form components for validation logic",
+          "2. Verify no validation schema (Yup, Zod) exists",
+          "3. Check for XSS protection beyond React's default"
+        ],
+        "expected_behavior": "All user inputs should be validated, sanitized, and protected against XSS/injection attacks.",
+        "actual_behavior": "No validation libraries or input sanitization implemented.",
+        "impact": "HIGH - Potential XSS vulnerabilities, data integrity issues, poor UX.",
+        "suggested_fix": "Implement form validation using Zod or Yup. Add input sanitization. Use controlled components with validation state.",
+        "file_path": "src/pages/Contact.tsx, src/pages/Services.tsx, src/pages/Reviews.tsx",
+        "line_number": 0
+      }
+    ],
+    "integration": [
+      {
+        "title": "Zero Test Coverage - No Tests Exist",
+        "description": "The application has NO unit tests, integration tests, or E2E tests. No testing infrastructure is configured.",
+        "severity": "critical",
+        "component": "integration",
+        "reproduction_steps": [
+          "1. Search repository for *.test.* or *.spec.* files",
+          "2. Check package.json for test scripts",
+          "3. Verify no Jest, Vitest, or testing library configuration"
+        ],
+        "expected_behavior": "Application should have comprehensive test coverage with unit, integration, and E2E tests.",
+        "actual_behavior": "Zero tests exist. No testing framework configured.",
+        "impact": "CRITICAL - No way to verify functionality, prevent regressions, or ensure code quality. Deployment is risky.",
+        "suggested_fix": "Set up Vitest + React Testing Library. Add unit tests for components, integration tests for user flows, and Playwright for E2E tests.",
+        "file_path": "tests/",
+        "line_number": 0
+      },
+      {
+        "title": "Deprecated ESLint Version",
+        "description": "Using ESLint v8 which is no longer supported. Should upgrade to v9.",
+        "severity": "low",
+        "component": "integration",
+        "reproduction_steps": [
+          "1. Check package.json",
+          "2. Note eslint version ^8.50.0",
+          "3. Check ESLint website for version support status"
+        ],
+        "expected_behavior": "Should use latest supported ESLint version (v9+).",
+        "actual_behavior": "Using deprecated ESLint v8.",
+        "impact": "LOW - Security updates and bug fixes no longer provided.",
+        "suggested_fix": "Upgrade to ESLint v9 with new flat config format.",
+        "file_path": "package.json",
+        "line_number": 0
+      },
+      {
+        "title": "Linting Warnings Need Resolution",
+        "description": "Found 5 ESLint warnings that should be fixed.",
+        "severity": "low",
+        "component": "integration",
+        "reproduction_steps": [
+          "1. Run 'npm run lint'",
+          "2. Observe warnings",
+          "3. Review warnings for unused imports and hooks dependencies"
+        ],
+        "expected_behavior": "Code should pass linting without warnings.",
+        "actual_behavior": "ESLint reports 5 warnings.",
+        "impact": "LOW - Code quality and maintainability concerns.",
+        "suggested_fix": "Fix unused imports, resolve React hooks dependencies warnings.",
+        "file_path": "src/components/ThreeD/Scene.tsx, src/pages/Contact.tsx, src/pages/Shop.tsx",
+        "line_number": 0
+      }
+    ],
+    "performance": [
+      {
+        "title": "Unoptimized External Images - Performance Impact",
+        "description": "Application loads large unoptimized images from Unsplash CDN without size optimization or lazy loading.",
+        "severity": "medium",
+        "component": "performance",
+        "reproduction_steps": [
+          "1. Open Network tab in DevTools",
+          "2. Load any page with images",
+          "3. Observe large image downloads from Unsplash",
+          "4. Note no lazy loading or responsive images"
+        ],
+        "expected_behavior": "Images should be optimized, resized appropriately, and lazy-loaded.",
+        "actual_behavior": "Full-size external images loaded eagerly without optimization.",
+        "impact": "MEDIUM - Slow page loads, high bandwidth usage, poor mobile experience.",
+        "suggested_fix": "Implement image optimization, use responsive images, add lazy loading, consider using image CDN with automatic optimization.",
+        "file_path": "src/components/home/, src/pages/",
+        "line_number": 0
+      }
+    ]
+  },
+  "all_issues": [
+    {
+      "title": "Non-Functional Forms - No Submit Handlers",
+      "description": "Found 3 form(s) without proper submission handlers. Forms cannot send data anywhere.",
+      "severity": "high",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. Navigate to Contact page (/contact)",
+        "2. Fill out the contact form",
+        "3. Click submit button",
+        "4. Observe that nothing happens"
+      ],
+      "expected_behavior": "Forms should submit data to backend API endpoints and show confirmation messages.",
+      "actual_behavior": "Forms have no submit handlers or only preventDefault() with no actual submission logic.",
+      "impact": "HIGH - Users cannot contact the business, request services, or submit reviews.",
+      "suggested_fix": "Implement form submission handlers that POST data to backend API endpoints. Add validation and user feedback.",
+      "file_path": "src/pages/Reviews.tsx, src/pages/Services.tsx, src/pages/Contact.tsx",
+      "line_number": 0
+    },
+    {
+      "title": "Improper Navigation - Using window.location Instead of React Router",
+      "description": "Found usage of window.location.href for navigation which breaks React Router's SPA behavior.",
+      "severity": "medium",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. Check file: src/pages/Services.tsx:158",
+        "2. Note usage of window.location.href",
+        "3. This causes full page reload instead of SPA navigation"
+      ],
+      "expected_behavior": "Should use React Router's useNavigate() hook for client-side navigation.",
+      "actual_behavior": "Uses window.location.href which causes full page reload.",
+      "impact": "MEDIUM - Breaks SPA behavior, causes unnecessary page reloads, loses React state.",
+      "suggested_fix": "Replace window.location.href with useNavigate() from react-router-dom.",
+      "file_path": "src/pages/Services.tsx",
+      "line_number": 158
+    },
+    {
+      "title": "Missing Input Validation and Sanitization",
+      "description": "Forms lack input validation and sanitization, creating potential security vulnerabilities.",
+      "severity": "high",
+      "component": "security",
+      "reproduction_steps": [
+        "1. Check form components for validation logic",
+        "2. Verify no validation schema (Yup, Zod) exists",
+        "3. Check for XSS protection beyond React's default"
+      ],
+      "expected_behavior": "All user inputs should be validated, sanitized, and protected against XSS/injection attacks.",
+      "actual_behavior": "No validation libraries or input sanitization implemented.",
+      "impact": "HIGH - Potential XSS vulnerabilities, data integrity issues, poor UX.",
+      "suggested_fix": "Implement form validation using Zod or Yup. Add input sanitization. Use controlled components with validation state.",
+      "file_path": "src/pages/Contact.tsx, src/pages/Services.tsx, src/pages/Reviews.tsx",
+      "line_number": 0
+    },
+    {
+      "title": "Zero Test Coverage - No Tests Exist",
+      "description": "The application has NO unit tests, integration tests, or E2E tests. No testing infrastructure is configured.",
+      "severity": "critical",
+      "component": "integration",
+      "reproduction_steps": [
+        "1. Search repository for *.test.* or *.spec.* files",
+        "2. Check package.json for test scripts",
+        "3. Verify no Jest, Vitest, or testing library configuration"
+      ],
+      "expected_behavior": "Application should have comprehensive test coverage with unit, integration, and E2E tests.",
+      "actual_behavior": "Zero tests exist. No testing framework configured.",
+      "impact": "CRITICAL - No way to verify functionality, prevent regressions, or ensure code quality. Deployment is risky.",
+      "suggested_fix": "Set up Vitest + React Testing Library. Add unit tests for components, integration tests for user flows, and Playwright for E2E tests.",
+      "file_path": "tests/",
+      "line_number": 0
+    },
+    {
+      "title": "Duplicate Product Data - No Single Source of Truth",
+      "description": "Product data is duplicated in Shop.tsx and FeaturedProducts.tsx. Changes must be made in multiple places.",
+      "severity": "medium",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. Open src/pages/Shop.tsx and check products array",
+        "2. Open src/components/home/FeaturedProducts.tsx and check products array",
+        "3. Notice duplicate product definitions"
+      ],
+      "expected_behavior": "Product data should come from a single source (API or data file).",
+      "actual_behavior": "Products are hardcoded in multiple components with no synchronization.",
+      "impact": "MEDIUM - Data inconsistency, maintenance burden, risk of divergence.",
+      "suggested_fix": "Create a shared products data file or fetch from API. Use single source of truth.",
+      "file_path": "src/pages/Shop.tsx, src/components/home/FeaturedProducts.tsx",
+      "line_number": 0
+    },
+    {
+      "title": "Hardcoded Data in Components - Should Use API",
+      "description": "All data (products, reviews, carousel slides) is hardcoded in components instead of fetched from API.",
+      "severity": "medium",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. Check Shop.tsx for hardcoded products array",
+        "2. Check Reviews.tsx for hardcoded reviews array",
+        "3. Check HeroCarousel.tsx for hardcoded slides array",
+        "4. Note no API fetch calls exist"
+      ],
+      "expected_behavior": "Data should be fetched from backend API for dynamic content management.",
+      "actual_behavior": "All data is hardcoded in component files.",
+      "impact": "MEDIUM - Cannot update content without code deployment. No content management system.",
+      "suggested_fix": "Create API endpoints for products, reviews, and content. Use useEffect + fetch/axios to load data dynamically.",
+      "file_path": "src/pages/Shop.tsx, src/pages/Reviews.tsx, src/components/home/HeroCarousel.tsx",
+      "line_number": 0
+    },
+    {
+      "title": "Deprecated ESLint Version",
+      "description": "Using ESLint v8 which is no longer supported. Should upgrade to v9.",
+      "severity": "low",
+      "component": "integration",
+      "reproduction_steps": [
+        "1. Check package.json",
+        "2. Note eslint version ^8.50.0",
+        "3. Check ESLint website for version support status"
+      ],
+      "expected_behavior": "Should use latest supported ESLint version (v9+).",
+      "actual_behavior": "Using deprecated ESLint v8.",
+      "impact": "LOW - Security updates and bug fixes no longer provided.",
+      "suggested_fix": "Upgrade to ESLint v9 with new flat config format.",
+      "file_path": "package.json",
+      "line_number": 0
+    },
+    {
+      "title": "Generic Page Title - Poor SEO",
+      "description": "index.html has generic 'Vite + React + TS' title instead of business name.",
+      "severity": "medium",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. Open index.html",
+        "2. Check <title> tag",
+        "3. Note generic Vite template title"
+      ],
+      "expected_behavior": "Title should be 'DelightfulGroup.africa - Professional Cleaning & Landscaping Services'",
+      "actual_behavior": "Generic template title 'Vite + React + TS'",
+      "impact": "MEDIUM - Poor SEO, unprofessional appearance, low search rankings.",
+      "suggested_fix": "Update title and add proper meta description, Open Graph tags, and structured data.",
+      "file_path": "index.html",
+      "line_number": 0
+    },
+    {
+      "title": "Missing Meta Description",
+      "description": "No meta description tag for SEO.",
+      "severity": "medium",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. View page source",
+        "2. Search for meta description tag",
+        "3. Note absence"
+      ],
+      "expected_behavior": "Should have descriptive meta description for search engines.",
+      "actual_behavior": "No meta description exists.",
+      "impact": "MEDIUM - Reduced search engine visibility and click-through rates.",
+      "suggested_fix": "Add comprehensive meta tags including description, keywords, Open Graph, and Twitter cards.",
+      "file_path": "index.html",
+      "line_number": 0
+    },
+    {
+      "title": "Accessibility Improvements Needed",
+      "description": "Application needs accessibility enhancements for WCAG compliance.",
+      "severity": "medium",
+      "component": "frontend",
+      "reproduction_steps": [
+        "1. Run Lighthouse accessibility audit",
+        "2. Check for missing alt text on images",
+        "3. Verify keyboard navigation support",
+        "4. Test screen reader compatibility"
+      ],
+      "expected_behavior": "Should meet WCAG 2.1 Level AA standards for accessibility.",
+      "actual_behavior": "Some accessibility features missing or incomplete.",
+      "impact": "MEDIUM - Excludes users with disabilities, potential legal compliance issues.",
+      "suggested_fix": "Add skip links, improve ARIA labels, ensure keyboard navigation, verify color contrast, add alt text to all images.",
+      "file_path": "src/components/",
+      "line_number": 0
+    },
+    {
+      "title": "Unoptimized External Images - Performance Impact",
+      "description": "Application loads large unoptimized images from Unsplash CDN without size optimization or lazy loading.",
+      "severity": "medium",
+      "component": "performance",
+      "reproduction_steps": [
+        "1. Open Network tab in DevTools",
+        "2. Load any page with images",
+        "3. Observe large image downloads from Unsplash",
+        "4. Note no lazy loading or responsive images"
+      ],
+      "expected_behavior": "Images should be optimized, resized appropriately, and lazy-loaded.",
+      "actual_behavior": "Full-size external images loaded eagerly without optimization.",
+      "impact": "MEDIUM - Slow page loads, high bandwidth usage, poor mobile experience.",
+      "suggested_fix": "Implement image optimization, use responsive images, add lazy loading, consider using image CDN with automatic optimization.",
+      "file_path": "src/components/home/, src/pages/",
+      "line_number": 0
+    },
+    {
+      "title": "Linting Warnings Need Resolution",
+      "description": "Found 5 ESLint warnings that should be fixed.",
+      "severity": "low",
+      "component": "integration",
+      "reproduction_steps": [
+        "1. Run 'npm run lint'",
+        "2. Observe warnings",
+        "3. Review warnings for unused imports and hooks dependencies"
+      ],
+      "expected_behavior": "Code should pass linting without warnings.",
+      "actual_behavior": "ESLint reports 5 warnings.",
+      "impact": "LOW - Code quality and maintainability concerns.",
+      "suggested_fix": "Fix unused imports, resolve React hooks dependencies warnings.",
+      "file_path": "src/components/ThreeD/Scene.tsx, src/pages/Contact.tsx, src/pages/Shop.tsx",
+      "line_number": 0
+    }
+  ]
+}
