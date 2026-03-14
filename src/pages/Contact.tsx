@@ -160,7 +160,7 @@ const Contact: React.FC = () => {
                 {submitted ? (
                   <div className="text-center py-8">
                     <p className="text-green-600 font-semibold text-lg">Thank you! Your message is ready to send.</p>
-                    <p className="text-gray-500 mt-2 text-sm">Your email client should have opened. If not, please email us directly at sales@delightfulgroup.africa</p>
+                    <p className="text-gray-500 mt-2 text-sm">Your email client should have opened. If not, please email us directly at <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a></p>
                     <button className="mt-4 text-green-600 underline text-sm" onClick={() => setSubmitted(false)}>Send another message</button>
                   </div>
                 ) : (
