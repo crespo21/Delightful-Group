@@ -112,19 +112,23 @@ function checkForms() {
       });
     }
 
-    // Detect inputs that have neither an id (for label association) nor an aria-label
-    const noIdNoAriaInput = /<input(?:[^>](?!id=)(?!aria-label))*\/?>/gi;
-    const noIdNoAriaTextarea = /<textarea(?:[^>](?!id=)(?!aria-label))*>/gi;
-    if (noIdNoAriaInput.test(normalised) || noIdNoAriaTextarea.test(normalised)) {
+    // Detect inputs that have neither an id (for label association) nor an aria-label,
+    // AND are NOT directly wrapped inside a <label> element (which is also valid for a11y).
+    // Strategy: split on <label> ... </label> blocks and only scan content outside them.
+    const outsideLabels = normalised.replace(/<label\b[^>]*>.*?<\/label>/gi, '');
+    const noIdNoAriaInput = /<input(?![^>]*(id=|aria-label|type="hidden"|type='hidden'))[^>]*\/?>/gi;
+    const noIdNoAriaTextarea = /<textarea(?![^>]*(id=|aria-label))[^>]*>/gi;
+    if (noIdNoAriaInput.test(outsideLabels) || noIdNoAriaTextarea.test(outsideLabels)) {
       addFinding({
         severity: 'medium',
         category: 'frontend',
         title: 'Input element may lack an accessible label',
         description:
           `\`${rel}\` may contain form inputs without proper accessibility labels (no \`id\` ` +
-          'paired with a `<label htmlFor>`, and no `aria-label`). This harms screen-reader users.',
+          'paired with a `<label htmlFor>`, no `aria-label`, and not wrapped inside a `<label>` element). ' +
+          'This harms screen-reader users.',
         file: rel,
-        recommendation: 'Ensure every interactive form control has either an associated `<label htmlFor>` or an `aria-label` attribute.',
+        recommendation: 'Ensure every interactive form control has either an associated `<label htmlFor>`, an `aria-label` attribute, or is directly wrapped inside a `<label>` element.',
       });
     }
   }
