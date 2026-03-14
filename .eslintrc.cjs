@@ -15,4 +15,14 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  overrides: [
+    {
+      // Node.js scripts directory
+      files: ['scripts/**/*.js', 'scripts/**/*.ts'],
+      env: { node: true, es2020: true },
+      rules: {
+        'no-undef': 'off',
+      },
+    },
+  ],
 }

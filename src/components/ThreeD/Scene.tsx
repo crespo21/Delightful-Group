@@ -80,10 +80,11 @@ const Scene: React.FC<SceneProps> = ({
     };
     window.addEventListener('resize', handleResize);
     // Cleanup
+    const container = containerRef.current;
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
+      if (container) {
+        container.removeChild(renderer.domElement);
       }
       scene.clear();
     };

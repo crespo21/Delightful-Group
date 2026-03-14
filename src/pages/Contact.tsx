@@ -1,8 +1,40 @@
-import React, { lazy } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import Button from '../components/ui/Button';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_WHATSAPP, BUSINESS_ADDRESS } from '../constants';
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
+
 const Contact: React.FC = () => {
+  const [formData, setFormData] = useState<ContactFormData>({
+    name: '', email: '', phone: '', subject: '', message: '',
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { name, email, phone, subject, message } = formData;
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\n\nMessage:\n${message}`
+    );
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=Contact Form: ${encodeURIComponent(subject || 'Enquiry')}&body=${body}`;
+    setSubmitted(true);
+  };
+
   return <div className="min-h-screen">
       <section className="relative py-20 bg-green-600 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -70,7 +102,7 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="font-semibold text-lg">Our Location</h3>
                     <p className="text-gray-600">
-                      61 Andries Street, Rietvallei, Muldersrift, 1739
+                      {BUSINESS_ADDRESS}
                     </p>
                   </div>
                 </div>
@@ -80,8 +112,8 @@ const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Phone & WhatsApp</h3>
-                    <p className="text-gray-600">010 213 4575</p>
-                    <p className="text-gray-600">063 335 5126 (WhatsApp)</p>
+                    <p className="text-gray-600">{CONTACT_PHONE}</p>
+                    <p className="text-gray-600">{CONTACT_WHATSAPP} (WhatsApp)</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -91,7 +123,7 @@ const Contact: React.FC = () => {
                   <div>
                     <h3 className="font-semibold text-lg">Email</h3>
                     <p className="text-gray-600">
-                      sales@delightfulgroup.africa
+                      {CONTACT_EMAIL}
                     </p>
                   </div>
                 </div>
@@ -125,30 +157,37 @@ const Contact: React.FC = () => {
                 <h3 className="text-2xl font-semibold mb-6">
                   Send Us a Message
                 </h3>
-                <form>
+                {submitted ? (
+                  <div className="text-center py-8">
+                    <p className="text-green-600 font-semibold text-lg">Thank you! Your message is ready to send.</p>
+                    <p className="text-gray-500 mt-2 text-sm">Your email client should have opened. If not, please email us directly at <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a></p>
+                    <button className="mt-4 text-green-600 underline text-sm" onClick={() => setSubmitted(false)}>Send another message</button>
+                  </div>
+                ) : (
+                <form onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                       Name
                     </label>
-                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="name" type="text" placeholder="Your Name" />
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="name" name="name" type="text" placeholder="Your Name" value={formData.name} onChange={handleChange} required />
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                       Email
                     </label>
-                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="email" type="email" placeholder="Your Email" />
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="email" name="email" type="email" placeholder="Your Email" value={formData.email} onChange={handleChange} required />
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
                       Phone
                     </label>
-                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="phone" type="tel" placeholder="Your Phone" />
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="phone" name="phone" type="tel" placeholder="Your Phone" value={formData.phone} onChange={handleChange} />
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="subject">
                       Subject
                     </label>
-                    <select className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="subject">
+                    <select className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500" id="subject" name="subject" value={formData.subject} onChange={handleChange}>
                       <option value="">Select a subject</option>
                       <option value="cleaning">Cleaning Services</option>
                       <option value="landscaping">Landscaping Services</option>
@@ -160,12 +199,13 @@ const Contact: React.FC = () => {
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
                       Message
                     </label>
-                    <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 h-32" id="message" placeholder="Your Message"></textarea>
+                    <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 h-32" id="message" name="message" placeholder="Your Message" value={formData.message} onChange={handleChange} required></textarea>
                   </div>
                   <div className="flex items-center justify-end">
                     <Button type="submit">Send Message</Button>
                   </div>
                 </form>
+                )}
               </div>
             </motion.div>
           </div>
